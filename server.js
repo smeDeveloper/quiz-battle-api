@@ -23,7 +23,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
-app.use(cors({origin: "http://localhost:3000",}));
+app.use(cors({origin: "https://quiz-battle.netlify.app",}));
 
 app.use("/api" , getQuizzes);
 app.use("/api" , createQuiz);
@@ -37,3 +37,5 @@ app.use("/api" , getCorrectAnswersQuiz);
 app.use("/api" , getUserResult);
 
 app.listen(PORT, () => console.log("Server Is Running On Port " + PORT));
+
+module.exports = app;

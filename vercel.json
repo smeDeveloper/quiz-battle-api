@@ -1,10 +1,15 @@
 {
     "version": 2,
     "builds": [
-      { "src": "api/quiz.js", "use": "@vercel/node" }
+        {
+            "src": "server.js",
+            "use": "@vercel/node"
+        }
     ],
     "routes": [
-      { "src": "/api/quiz", "dest": "api/quiz.js" }
+        {
+            "src": "/(.*)",
+            "dest": "/server.js"
+        }
     ]
-  }
-  
+}

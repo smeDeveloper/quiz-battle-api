@@ -26,7 +26,7 @@ router.post("/quiz", async (req, res) => {
     if (questions.length > 2) {
         try {
             const saveQuiz = new Quiz({ category, from_id, from_name, description, questions });
-            await saveQuiz.save().then((data) => console.log(data));
+            await saveQuiz.save();
 
             const allQuizzes = await Quiz.find({});
 

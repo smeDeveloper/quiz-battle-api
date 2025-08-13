@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const serverless = require("serverless-http");
 const cors = require("cors");
 
 require("dotenv").config();
@@ -39,3 +40,4 @@ app.use("/api" , getUserResult);
 app.listen(PORT, () => console.log("Server Is Running On Port " + PORT));
 
 module.exports = app;
+module.exports.handler = serverless(app);

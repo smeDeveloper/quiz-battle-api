@@ -37,7 +37,6 @@ router.put("/edit", async (req, res) => {
             let quizzes = await Quiz.find({});
             quizzes.map(quiz => {
                 const quizID = `${quiz._id}`.split("new ObjectId('").pop().split("')").shift();
-                console.log(quizID);
                 return { ...quiz , _id: quizID,};
             })
             cachedQuizzes = quizzes;

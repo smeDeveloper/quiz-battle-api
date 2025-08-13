@@ -8,16 +8,16 @@ mongoose.connect(process.env.MONGODB_URL_CONNECTION)
     .then(() => console.log("CONNECTED TO MONGODB"))
     .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
 
-const getQuizzes = require("./router/Get Quizzes");
-const createQuiz = require("./router/Create Quiz");
-const getQuizDetails = require("./router/Get Quiz Details");
-const submit = require("./router/Submit");
-const getQuiz = require("./router/Get Quiz");
-const updateQuiz = require("./router/Update Quiz");
-const deleteQuiz = require("./router/Remove Quiz")
-const getNoCorrectAnswersQuiz = require("./router/Get Quiz (No correct answer)");
-const getCorrectAnswersQuiz = require("./router/Get Quiz (Correct Answers)");
-const getUserResult = require("./router/Get User Result");
+const getQuizzes = require("./api/Get Quizzes");
+const createQuiz = require("./api/Create Quiz");
+const getQuizDetails = require("./api/Get Quiz Details");
+const submit = require("./api/Submit");
+const getQuiz = require("./api/Get Quiz");
+const updateQuiz = require("./api/Update Quiz");
+const deleteQuiz = require("./api/Remove Quiz")
+const getNoCorrectAnswersQuiz = require("./api/Get Quiz (No correct answer)");
+const getCorrectAnswersQuiz = require("./api/Get Quiz (Correct Answers)");
+const getUserResult = require("./api/Get User Result");
 
 const app = express();
 const PORT = process.env.PORT || 3001;

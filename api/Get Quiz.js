@@ -22,7 +22,7 @@ redisClient.connect()
 router.get("/quiz/:id", async (req, res) => {
     const { id } = req.params;
 
-    const cachedQuiz = await client.get(`quiz:${id}`);
+    const cachedQuiz = await redisClient.get(`quiz:${id}`);
     if (cachedQuiz) { 
         const quiz = JSON.parse(cachedQuiz)
         const newQuiz = { 
@@ -38,7 +38,7 @@ router.get("/quiz/:id", async (req, res) => {
 
     try {
         const quiz = await Quiz.findById(id);
-        await client.setEx(`quiz:${id}`, 900, JSON.stringify(quiz));
+        await redisClient.setEx(`quiz:${id}`, 900, JSON.stringify(quiz));
         const updatedQuiz = {
             ...quiz.toObject(),
             questions: quiz.questions.map(question => ({

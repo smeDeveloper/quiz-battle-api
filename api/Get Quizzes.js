@@ -13,7 +13,7 @@ const redisClient = redis.createClient({
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
     },
-    
+
 });
 
 redisClient.connect()
@@ -26,13 +26,13 @@ router.get("/quiz", async (req, res) => {
         if (cachedQuizzes.length) {
             const parsedQuizzes = cachedQuizzes.map(q => JSON.parse(q));
             const newQuizzes = parsedQuizzes.map(quiz => {
-                if(typeof quiz === "string") quiz = JSON.parse(quiz);
+                if (typeof quiz === "string") quiz = JSON.parse(quiz);
                 const updatedQuiz = { ...quiz };
                 updatedQuiz.questions = quiz.questions.map(question => {
                     question.question = ""
                     question.answers = [];
                     question.correctAnswer = "";
-                    return {question:question.question , answers: question.answers, correctAnswer: question.correctAnswer,};
+                    return { question: question.question, answers: question.answers, correctAnswer: question.correctAnswer, };
                 })
                 return updatedQuiz;
             })
@@ -48,9 +48,10 @@ router.get("/quiz", async (req, res) => {
         const newQuizzes = quizzes.map(quiz => {
             const updatedQuiz = { ...quiz };
             updatedQuiz.questions = quiz.questions.map(question => {
+                question.question = ""
                 question.answers = [];
                 question.correctAnswer = "";
-                return {...question , answers: question.answers, correctAnswer: question.correctAnswer,};
+                return { question: question.question, answers: question.answers, correctAnswer: question.correctAnswer, };
             })
             return updatedQuiz;
         })

@@ -39,7 +39,7 @@ router.get("/quiz", async (req, res) => {
             return res.json({ msg: "fetched", quizzes: newQuizzes });
         }
 
-        const quizzes = await Quiz.find({});
+        const quizzes = await Quiz.find({}).lean();
         for (const quiz of quizzes) {
             await redisClient.rPush("quizzes", JSON.stringify(quiz));
         }

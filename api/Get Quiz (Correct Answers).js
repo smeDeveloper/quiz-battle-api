@@ -5,7 +5,7 @@ router.get("/quiz/with-answers/:id", async (req, res) => {
     const { id } = req.params;
 
     try {
-        const questions = await Quiz.findById(id , {'questions.correctAnswer': 1,});
+        const questions = await Quiz.findById(id , {'questions.correctAnswer': 1,}).lean();
         const correctAnswers = [];
         for(let i = 0; i < questions.questions.length; i++) {
             correctAnswers.push(questions.questions[i].correctAnswer);

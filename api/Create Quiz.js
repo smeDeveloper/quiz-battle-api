@@ -26,9 +26,9 @@ router.post("/quiz", async (req, res) => {
     if (questions.length > 2) {
         try {
             const saveQuiz = new Quiz({ category, from_id, from_name, description, questions });
-            await saveQuiz.save();
-
-            const allQuizzes = await Quiz.find({});
+            const savedQuiz = await saveQuiz.save();
+            const quizID = `${savedQuiz._id}`.split("new ObjectId('").pop().split("')").shift();
+            const allQuizzes = await Quiz.find({}).lean();
 
             await redisClient.del("quizzes");
             for (let i = 0; i < allQuizzes.length; i++) {
@@ -39,6 +39,7 @@ router.post("/quiz", async (req, res) => {
 
             res.status(201).json({
                 msg: "Quiz has been created successfully!",
+                id: quizID,
                 saved: true,
             });
         } catch (err) {

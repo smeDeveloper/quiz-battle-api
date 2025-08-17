@@ -23,7 +23,7 @@ router.put("/edit", async (req, res) => {
     const { quizID, userID, data } = req.body;
 
     try {
-        const quiz = await Quiz.findById(quizID);
+        const quiz = await Quiz.findById(quizID).lean();
         if (!quiz) return res.json({ failed: true, msg: "Quiz is not found.", });
         if (quiz.from_id !== userID) return res.json({ failed: true, msg: "Only the quiz creator can update this quiz.", });
 
@@ -34,7 +34,7 @@ router.put("/edit", async (req, res) => {
         if (cachedQuizzes.length) {
             cachedQuizzes = cachedQuizzes.map(q => JSON.parse(q));
         } else {
-            let quizzes = await Quiz.find({});
+            let quizzes = await Quiz.find({}).lean();
             quizzes.map(quiz => {
                 const quizID = `${quiz._id}`.split("new ObjectId('").pop().split("')").shift();
                 return { ...quiz , _id: quizID,};

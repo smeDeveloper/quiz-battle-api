@@ -6,8 +6,8 @@ router.post("/result" , async (req , res) => {
     const { quizID , userID } = req.body;
 
     try {
-        const quizQuestions = await Quiz.findById(quizID , { category: 0 , from_name: 0, from_id: 0, description: 0, createdAt: 0,});
-        const result = await Result.find({id: userID, quiz_id: quizID,});
+        const quizQuestions = await Quiz.findById(quizID , { category: 0 , from_name: 0, from_id: 0, description: 0, createdAt: 0,}).lean();
+        const result = await Result.find({id: userID, quiz_id: quizID,}).lean();
 
         res.json({quizQuestions , result: result[0]})
     }catch (err) {

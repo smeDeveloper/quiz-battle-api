@@ -24,7 +24,7 @@ router.delete("/delete" , async (req , res) => {
     const { quizID , userID } = req.body;
 
     try {
-        const quiz = await Quiz.findById(quizID);
+        const quiz = await Quiz.findById(quizID).lean();
         if(quiz) {
             if(quiz.from_id !== userID) return res.json({failed: true, msg: "Only the quiz creator can delete this quiz.",});
             let cachedQuizzes = await redisClient.lRange("quizzes" , 0 , -1);

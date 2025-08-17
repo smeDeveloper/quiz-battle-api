@@ -37,12 +37,12 @@ router.get("/quiz/:id", async (req, res) => {
     };
 
     try {
-        const quiz = await Quiz.findById(id);
+        const quiz = await Quiz.findById(id).lean();
         await redisClient.setEx(`quiz:${id}`, 900, JSON.stringify(quiz));
         const updatedQuiz = {
-            ...quiz.toObject(),
+            ...quiz,
             questions: quiz.questions.map(question => ({
-                ...question.toObject(),
+                ...question,
                 answers: [],
                 correctAnswer: "",
                 question: ""

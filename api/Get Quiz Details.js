@@ -9,8 +9,8 @@ router.post("/results" , async (req , res) => {
     let studentsResults = {};
 
     try {
-        quizData = await Quiz.findById(quizID);
-        studentsResults = await Result.find({quiz_id: quizID,});
+        quizData = await Quiz.findById(quizID).lean();
+        studentsResults = await Result.find({quiz_id: quizID,}).lean();
         if(quizData.from_id !== user_id) return res.json({fetched: false, msg: "Only the teacher of this quiz can access the results of this quiz.",})
         res.json({quizData: quizData, studentsResults: studentsResults,});
     }catch (err) {

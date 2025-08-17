@@ -24,7 +24,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({origin: "https://quiz-battle-app.netlify.app",}));
 
 app.use("/api" , getQuizzes);
 app.use("/api" , createQuiz);

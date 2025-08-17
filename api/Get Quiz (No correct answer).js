@@ -7,8 +7,8 @@ router.get("/quiz/no-correct-answer/:id" , async (req , res) => {
     try {
         const quiz = await Quiz.findById(id).lean();
         const newQuiz = { 
-            ...quiz.toObject(),
-            questions: quiz.questions.toObject().map(question => ({
+            ...quiz,
+            questions: quiz.questions.map(question => ({
                 correctAnswer: "",
                 question: question.question,
                 answers: question.answers,

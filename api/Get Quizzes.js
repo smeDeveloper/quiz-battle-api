@@ -27,7 +27,7 @@ redisClient.connect()
 
 router.get("/quiz", async (req, res) => {
     try {
-        const cachedQuizzes = await redisClient.get("quizzes");
+        let cachedQuizzes = await redisClient.get("quizzes");
         if (cachedQuizzes) {
             cachedQuizzes = JSON.parse(cachedQuizzes);
             const newQuizzes = cachedQuizzes.map(quiz => {

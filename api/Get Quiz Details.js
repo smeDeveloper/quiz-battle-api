@@ -3,6 +3,11 @@ const router = express.Router();
 const Quiz = require("../models/quiz");
 const Result = require("../models/result");
 
+const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGODB_URL_CONNECTION)
+    .then(() => console.log("CONNECTED TO MONGODB"))
+    .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
 router.post("/results" , async (req , res) => {
     const { user_id , quizID } = req.body;
     let quizData = {};

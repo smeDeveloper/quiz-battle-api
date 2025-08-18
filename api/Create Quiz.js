@@ -6,6 +6,11 @@ const router = express.Router();
 
 require("dotenv").config();
 
+const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGODB_URL_CONNECTION)
+    .then(() => console.log("CONNECTED TO MONGODB"))
+    .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
 const redisClient = redis.createClient({
     username: process.env.REDIS_USERNAME,
     password: process.env.REDIS_PASSWORD,
@@ -30,12 +35,11 @@ router.post("/quiz", async (req, res) => {
             const quizID = `${savedQuiz._id}`.split("new ObjectId('").pop().split("')").shift();
             const allQuizzes = await Quiz.find({}).lean();
 
-            await redisClient.del("quizzes");
-            for (let i = 0; i < allQuizzes.length; i++) {
-                await redisClient.rPush("quizzes", JSON.stringify(allQuizzes[i]));
-            }
+            let cachedQuizzes = await redisClient.get("quizzes");
+            if(cachedQuizzes) cachedQuizzes = JSON.parse(cachedQuizzes);
+            cachedQuizzes.push(saveQuiz);
 
-            await redisClient.expire("quizzes", 900);
+            await redisClient.set("quizzes" , JSON.stringify(cachedQuizzes));
 
             res.status(201).json({
                 msg: "Quiz has been created successfully!",

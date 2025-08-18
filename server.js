@@ -1,5 +1,4 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const serverless = require("serverless-http");
 const cors = require("cors");
 
@@ -15,10 +14,6 @@ const deleteQuiz = require("./api/Remove Quiz")
 const getNoCorrectAnswersQuiz = require("./api/Get Quiz (No correct answer)");
 const getCorrectAnswersQuiz = require("./api/Get Quiz (Correct Answers)");
 const getUserResult = require("./api/Get User Result");
-
-mongoose.connect(process.env.MONGODB_URL_CONNECTION)
-    .then(() => console.log("CONNECTED TO MONGODB"))
-    .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
 
 const app = express();
 const PORT = process.env.PORT || 3001;

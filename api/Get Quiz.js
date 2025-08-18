@@ -5,6 +5,11 @@ const Quiz = require("../models/quiz");
 
 require("dotenv").config();
 
+const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGODB_URL_CONNECTION)
+    .then(() => console.log("CONNECTED TO MONGODB"))
+    .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
 const redisClient = redis.createClient({
     username: process.env.REDIS_USERNAME,
     password: process.env.REDIS_PASSWORD,

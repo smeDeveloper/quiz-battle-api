@@ -4,6 +4,11 @@ const router = express.Router();
 const redis = require("redis");
 const Result = require("../models/result");
 
+const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGODB_URL_CONNECTION)
+    .then(() => console.log("CONNECTED TO MONGODB"))
+    .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
 require("dotenv").config();
 
 const redisClient = redis.createClient({
@@ -27,17 +32,12 @@ router.delete("/delete" , async (req , res) => {
         const quiz = await Quiz.findById(quizID).lean();
         if(quiz) {
             if(quiz.from_id !== userID) return res.json({failed: true, msg: "Only the quiz creator can delete this quiz.",});
-            let cachedQuizzes = await redisClient.lRange("quizzes" , 0 , -1);
-            if(cachedQuizzes.length) {
-                cachedQuizzes = cachedQuizzes.map(quiz => JSON.parse(quiz));
+            let cachedQuizzes = await redisClient.get("quizzes");
+            if(cachedQuizzes) {
+                cachedQuizzes = JSON.parse(cachedQuizzes);
                 const quizIndex = cachedQuizzes.findIndex(quiz => quiz._id === quizID);
                 cachedQuizzes.splice(quizIndex , 1);
-                await redisClient.del("quizzes");
-                for(let i = 0; i < cachedQuizzes.length; i++) {
-                    await redisClient.rPush("quizzes" , JSON.stringify(cachedQuizzes[i]));
-                }
-
-                await redisClient.expire("quizzes" , 900);
+                await redisClient.set("quizzes" , JSON.stringify(cachedQuizzes));
 
                 const cachedQuiz = redisClient.get(`quiz:${quizID}`);
                 if(cachedQuiz) {

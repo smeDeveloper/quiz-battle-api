@@ -4,6 +4,11 @@ const Quiz = require("../models/quiz");
 
 const router = express.Router();
 
+const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGODB_URL_CONNECTION)
+    .then(() => console.log("CONNECTED TO MONGODB"))
+    .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
 require("dotenv").config();
 
 const redisClient = redis.createClient({
@@ -22,11 +27,10 @@ redisClient.connect()
 
 router.get("/quiz", async (req, res) => {
     try {
-        const cachedQuizzes = await redisClient.lRange("quizzes", 0, -1);
-        if (cachedQuizzes.length) {
-            const parsedQuizzes = cachedQuizzes.map(q => JSON.parse(q));
-            const newQuizzes = parsedQuizzes.map(quiz => {
-                if (typeof quiz === "string") quiz = JSON.parse(quiz);
+        const cachedQuizzes = await redisClient.get("quizzes");
+        if (cachedQuizzes) {
+            cachedQuizzes = JSON.parse(cachedQuizzes);
+            const newQuizzes = cachedQuizzes.map(quiz => {
                 const updatedQuiz = { ...quiz };
                 updatedQuiz.questions = quiz.questions.map(question => {
                     question.question = ""
@@ -40,10 +44,7 @@ router.get("/quiz", async (req, res) => {
         }
 
         const quizzes = await Quiz.find({}).lean();
-        for (const quiz of quizzes) {
-            await redisClient.rPush("quizzes", JSON.stringify(quiz));
-        }
-        await redisClient.expire("quizzes", 900);
+        await redisClient.set("quizzes" , JSON.stringify(quizzes))
 
         const newQuizzes = quizzes.map(quiz => {
             const updatedQuiz = { ...quiz };

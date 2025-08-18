@@ -2,6 +2,11 @@ const router = require("express").Router();
 const Result = require("../models/result");
 const Quiz = require("../models/quiz");
 
+const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGODB_URL_CONNECTION)
+    .then(() => console.log("CONNECTED TO MONGODB"))
+    .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
 router.post("/result" , async (req , res) => {
     const { quizID , userID } = req.body;
 

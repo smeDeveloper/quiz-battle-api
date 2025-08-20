@@ -1,15 +1,17 @@
 const express = require("express");
-const Quiz = require("../models/quiz")
 const router = express.Router();
 const redis = require("redis");
-const Result = require("../models/result");
+
+
+require("dotenv").config();
 
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGODB_URL_CONNECTION)
     .then(() => console.log("CONNECTED TO MONGODB"))
     .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
 
-require("dotenv").config();
+const Quiz = require("../models/quiz")
+const Result = require("../models/result");
 
 const redisClient = redis.createClient({
     username: process.env.REDIS_USERNAME,

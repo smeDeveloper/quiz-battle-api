@@ -1,7 +1,6 @@
 const express = require("express");
 const redis = require("redis");
 const router = express.Router();
-const Quiz = require("../models/quiz");
 
 require("dotenv").config();
 
@@ -9,6 +8,8 @@ const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGODB_URL_CONNECTION)
     .then(() => console.log("CONNECTED TO MONGODB"))
     .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
+const Quiz = require("../models/quiz");
 
 const redisClient = redis.createClient({
     username: process.env.REDIS_USERNAME,
@@ -48,7 +49,7 @@ router.put("/edit", async (req, res) => {
         }        
 
         const quizIndex = cachedQuizzes.findIndex(quiz => quiz._id === quizID);
-        cachedQuizzes[quizIndex] = { ...cachedQuizzes[quizIndex], category: data.category, description: data.description, };
+        cachedQuizzes[quizIndex] = { ...cachedQuizzes[quizIndex], category: data.category, description: data.description, from_name: data.from_name, };
 
         await redisClient.set("quizzes", JSON.stringify(cachedQuizzes));
 

@@ -1,10 +1,13 @@
 const router = require("express").Router();
-const Quiz = require("../models/quiz");
+
+require("dotenv").config();
 
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGODB_URL_CONNECTION)
     .then(() => console.log("CONNECTED TO MONGODB"))
     .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
+const Quiz = require("../models/quiz");
 
 router.get("/quiz/with-answers/:id", async (req, res) => {
     const { id } = req.params;

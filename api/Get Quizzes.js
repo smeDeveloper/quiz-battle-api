@@ -6,12 +6,23 @@ const router = express.Router();
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-mongoose.connect(process.env.MONGODB_URL_CONNECTION)
-    .then(() => console.log("CONNECTED TO MONGODB"))
-    .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
+async function connectDB() {
+    try {
+        await mongoose.connect(process.env.MONGODB_URL_CONNECTION, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log("✅ MongoDB connected");
+    } catch (err) {
+        console.error("❌ MongoDB connection error:", err);
+        process.exit(1);
+    }
+}
+
+connectDB();
 
 const Quiz = require("../models/quiz");
-
 
 const redisClient = redis.createClient({
     username: process.env.REDIS_USERNAME,
@@ -46,7 +57,7 @@ router.get("/quiz", async (req, res) => {
         }
 
         const quizzes = await Quiz.find({}).lean();
-        await redisClient.set("quizzes" , JSON.stringify(quizzes))
+        await redisClient.set("quizzes", JSON.stringify(quizzes))
 
         const newQuizzes = quizzes.map(quiz => {
             const updatedQuiz = { ...quiz };

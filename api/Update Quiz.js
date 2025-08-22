@@ -5,9 +5,21 @@ const router = express.Router();
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-mongoose.connect(process.env.MONGODB_URL_CONNECTION)
-    .then(() => console.log("CONNECTED TO MONGODB"))
-    .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
+async function connectDB() {
+    try {
+        await mongoose.connect(process.env.MONGODB_URL_CONNECTION, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log("✅ MongoDB connected");
+    } catch (err) {
+        console.error("❌ MongoDB connection error:", err);
+        process.exit(1);
+    }
+}
+
+connectDB();
 
 const Quiz = require("../models/quiz");
 
@@ -18,7 +30,7 @@ const redisClient = redis.createClient({
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
     },
-    
+
 });
 
 redisClient.connect()
@@ -43,10 +55,10 @@ router.put("/edit", async (req, res) => {
             let quizzes = await Quiz.find({}).lean();
             quizzes.map(quiz => {
                 const quizID = `${quiz._id}`.split("new ObjectId('").pop().split("')").shift();
-                return { ...quiz , _id: quizID,};
+                return { ...quiz, _id: quizID, };
             })
             cachedQuizzes = quizzes;
-        }        
+        }
 
         const quizIndex = cachedQuizzes.findIndex(quiz => quiz._id === quizID);
         cachedQuizzes[quizIndex] = { ...cachedQuizzes[quizIndex], category: data.category, description: data.description, from_name: data.from_name, };

@@ -4,9 +4,21 @@ const router = express.Router();
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-mongoose.connect(process.env.MONGODB_URL_CONNECTION)
-    .then(() => console.log("CONNECTED TO MONGODB"))
-    .catch((err) => console.error("FAILED TO CONNECT TO MONGODB:", err));
+
+async function connectDB() {
+    try {
+        await mongoose.connect(process.env.MONGODB_URL_CONNECTION, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log("✅ MongoDB connected");
+    } catch (err) {
+        console.error("❌ MongoDB connection error:", err);
+        process.exit(1);
+    }
+}
+
+connectDB();
 
 const Result = require("../models/result");
 
@@ -18,10 +30,10 @@ router.post("/submit", async (req, res) => {
     try {
         await newResult.save();
     } catch (err) {
-        res.json({failed: true,})
+        res.json({ failed: true, })
     }
 
-    res.json({saved: true,});
+    res.json({ saved: true, });
 })
 
 module.exports = router;

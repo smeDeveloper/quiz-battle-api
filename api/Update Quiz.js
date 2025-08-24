@@ -29,12 +29,16 @@ const redisClient = redis.createClient({
     socket: {
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
+        reconnectStrategy: (retries) => {
+            if (retries > 10) return new Error('Too many retries');
+            return Math.min(retries * 50, 500); 
+        }
     },
 
 });
 
 redisClient.connect()
-    .then(() => console.log("CONNECTED TO REDIS"))
+    .then(() => console.log("✅ CONNECTED TO REDIS"))
     .catch((err) => console.error("FAILED TO CONNECT TO REDIS:", err));
 
 router.put("/edit", async (req, res) => {

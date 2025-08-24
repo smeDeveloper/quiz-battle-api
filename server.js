@@ -14,12 +14,16 @@ const deleteQuiz = require("./api/Remove Quiz")
 const getNoCorrectAnswersQuiz = require("./api/Get Quiz (No correct answer)");
 const getCorrectAnswersQuiz = require("./api/Get Quiz (Correct Answers)");
 const getUserResult = require("./api/Get User Result");
+const checkPassword = require("./api/checkPassword");
+const changePassword = require("./api/changePassword");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
-app.use(cors({origin: "https://quiz-battle-app.netlify.app",}));
+app.use(cors({
+    origin: "https://quiz-battle-app.netlify.app",
+}));
 
 app.use("/api" , getQuizzes);
 app.use("/api" , createQuiz);
@@ -31,6 +35,8 @@ app.use("/api" , deleteQuiz);
 app.use("/api" , getNoCorrectAnswersQuiz);
 app.use("/api" , getCorrectAnswersQuiz);
 app.use("/api" , getUserResult);
+app.use("/api" , checkPassword);
+app.use("/api" , changePassword);
 
 app.listen(PORT, () => console.log("Server Is Running On Port " + PORT));
 

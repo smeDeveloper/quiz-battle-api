@@ -5,8 +5,8 @@ const quizSchema = new mongoose.Schema({
         type: String, 
         required: true, 
         enum: {
-            values: ["Math" , "Science" , "Arabic" , "English" , "Social Studies"], 
-            message: "You must use a category from one of these values Math , Arabic , English , Science , Social Studies.",
+            values: ["Math" , "Science" , "Arabic" , "English" , "Social Studies" , "French"], 
+            message: "You must use a category from one of these values Math , Arabic , English , Science , Social Studies, French.",
         },
     },
     from_name: {
@@ -24,8 +24,18 @@ const quizSchema = new mongoose.Schema({
             correctAnswer: String,
         }
     ],
-    description: { type: String, default: "",},
-    createdAt: { type: Date, default: Date.now(),},
+    description: { 
+        type: String, 
+        default: "",
+    },
+    createdAt: { 
+        type: Date, 
+        default: Date.now(),
+    },
+    password: { 
+        type: String, 
+        default: "",
+    },
 } , {
     collection: "quizzes",
 });

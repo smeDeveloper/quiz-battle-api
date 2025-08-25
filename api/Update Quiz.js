@@ -1,27 +1,10 @@
 const express = require("express");
 const redis = require("redis");
 const router = express.Router();
+const Quiz = require("../models/quiz");
+const connectDB = require("../connectMongoDB");
 
 require("dotenv").config();
-
-const mongoose = require("mongoose");
-
-async function connectDB() {
-    try {
-        await mongoose.connect(process.env.MONGODB_URL_CONNECTION, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log("✅ MongoDB connected");
-    } catch (err) {
-        console.error("❌ MongoDB connection error:", err);
-        process.exit(1);
-    }
-}
-
-connectDB();
-
-const Quiz = require("../models/quiz");
 
 const redisClient = redis.createClient({
     username: process.env.REDIS_USERNAME,
@@ -45,6 +28,7 @@ router.put("/edit", async (req, res) => {
     const { quizID, userID, data } = req.body;
 
     try {
+        await connectDB();
         const quiz = await Quiz.findById(quizID).lean();
         if (!quiz) return res.json({ failed: true, msg: "Quiz is not found.", });
         if (quiz.from_id !== userID) return res.json({ failed: true, msg: "Only the quiz creator can update this quiz.", });

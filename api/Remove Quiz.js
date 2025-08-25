@@ -1,29 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const redis = require("redis");
+const connectDB = require("../connectMongoDB");
+const Quiz = require("../models/quiz")
+const Result = require("../models/result");
 
 
 require("dotenv").config();
 
-const mongoose = require("mongoose");
-
-async function connectDB() {
-    try {
-        await mongoose.connect(process.env.MONGODB_URL_CONNECTION, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log("✅ MongoDB connected");
-    } catch (err) {
-        console.error("❌ MongoDB connection error:", err);
-        process.exit(1);
-    }
-}
-
-connectDB();
-
-const Quiz = require("../models/quiz")
-const Result = require("../models/result");
 
 const redisClient = redis.createClient({
     username: process.env.REDIS_USERNAME,
@@ -47,6 +31,7 @@ router.delete("/delete", async (req, res) => {
     const { quizID, userID } = req.body;
 
     try {
+        await connectDB();
         const quiz = await Quiz.findById(quizID).lean();
         if (quiz) {
             if (quiz.from_id !== userID) return res.json({ failed: true, msg: "Only the quiz creator can delete this quiz.", });

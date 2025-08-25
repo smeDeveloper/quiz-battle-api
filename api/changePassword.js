@@ -1,22 +1,7 @@
 const router = require("express").Router();
-const mongoose = require("mongoose");
 const redis = require("redis");
 const { genSalt, hash } = require("bcrypt");
-
-async function connectDB() {
-    try {
-        await mongoose.connect(process.env.MONGODB_URL_CONNECTION, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log("✅ MongoDB connected");
-    } catch (err) {
-        console.error("❌ MongoDB connection error:", err);
-        process.exit(1);
-    }
-}
-
-connectDB();
+const connectDB = require("../connectMongoDB");
 
 const Quiz = require("../models/quiz");
 
@@ -58,6 +43,7 @@ router.put("/change-password", async (req, res) => {
     }
 
     try {
+        await connectDB();
         const quiz = await Quiz.findById(quizID).lean();
         if (!quiz) return res.json({ failed: true, msg: "Quiz is not found in the database.", });
         if (quiz.from_id !== userID) return res.json({ failed: true, msg: "Only the quiz creator can change the password of the quiz.", });

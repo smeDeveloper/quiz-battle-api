@@ -1,27 +1,12 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const redis = require("redis");
+const connectDB = require("../connectMongoDB");
 
 const router = express.Router();
 
 require("dotenv").config();
 
-const mongoose = require("mongoose");
-
-async function connectDB() {
-    try {
-        await mongoose.connect(process.env.MONGODB_URL_CONNECTION, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log("✅ MongoDB connected");
-    } catch (err) {
-        console.error("❌ MongoDB connection error:", err);
-        process.exit(1);
-    }
-}
-
-connectDB();
 
 const Quiz = require("../models/quiz");
 
@@ -47,6 +32,7 @@ router.post("/quiz", async (req, res) => {
     const { questions, from_id, from_name, description, category, password } = req.body;
     if (questions.length > 2) {
         try {
+            await connectDB();
             let hashedPassword = "";
             const salt = password.trim() ? await bcrypt.genSalt(10) : "";
             hashedPassword = password.trim() ? await bcrypt.hash(password, salt) : "";

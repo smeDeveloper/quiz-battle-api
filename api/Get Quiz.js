@@ -1,25 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const redis = require("redis");
+const connectDB = require("../connectMongoDB")
 
 require("dotenv").config();
-
-const mongoose = require("mongoose");
-
-async function connectDB() {
-    try {
-        await mongoose.connect(process.env.MONGODB_URL_CONNECTION, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log("✅ MongoDB connected");
-    } catch (err) {
-        console.error("❌ MongoDB connection error:", err);
-        process.exit(1);
-    }
-}
-
-connectDB();
 
 const Quiz = require("../models/quiz");
 
@@ -59,6 +43,7 @@ router.get("/quiz/:id", async (req, res) => {
     };
 
     try {
+        await connectDB();
         const quiz = await Quiz.findById(id).lean();
         await redisClient.setEx(`quiz:${id}`, 900, JSON.stringify(quiz));
         const updatedQuiz = {
